@@ -25,7 +25,7 @@ function Error() {
   return (
     <ErrorWrapper>
       <ErrorTitle>Oups 🙈 Cette page n'existe pas</ErrorTitle>
-      <Illustration src="https://github.com/atoulmet/assets/blob/master/404.svg?raw=true" />
+      <Illustration />
       <ErrorSubtitle>
         Il semblerait que la page que vous cherchez n'existe pas
       </ErrorSubtitle>
