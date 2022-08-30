@@ -53,7 +53,7 @@ function Freelances() {
   const [error, setError] = useState(false)
   const [freelancersList, setFreelancesList] = useState ([])
 
-  useEffect(() => {
+/* useEffect(() => {
     async function fetchFreelances() {
       setDataLoading(true)
       try {
@@ -61,7 +61,7 @@ function Freelances() {
         const { freelancersList } = await response.json()
         setFreelancesList(freelancersList)
       } catch (err) {
-        console.log('===== error =====', err)
+        //console.log('===== error =====', err)
         setError(true)
       } finally {
         setDataLoading(false)
@@ -73,7 +73,7 @@ function Freelances() {
   if (error) {
     return <span> Oups il y a eu un problème</span>
   }
-
+*/
   return (
     <div>
         <PageTitle>Trouvez votre prestataire</PageTitle>
@@ -86,7 +86,7 @@ function Freelances() {
           </LoaderWrapper>
         ) : (
         <CardsContainer>
-        {freelancersList.map((profile, index) => (
+          {freelanceProfiles.map((profile, index) => (
           <Card
           key={`${profile.name}-${index}`}
               label={profile.jobTitle}
@@ -95,6 +95,16 @@ function Freelances() {
           />
         ))}
         </CardsContainer>
+        /* <CardsContainer>
+        {freelancersList.map((profile, index) => (
+          <Card
+          key={`${profile.name}-${index}`}
+              label={profile.jobTitle}
+              picture={profile.picture}
+              title={profile.name}
+          />
+        ))}
+        </CardsContainer> */
         )}
     </div>
   )
