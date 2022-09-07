@@ -68,15 +68,13 @@ function saveReply(answer) {
   saveAnswers({ [questionNumber]: answer })
 }
 
- // useEffect(() => {
- // setDataLoading(true)
- //   fetch(`http://localhost:3000/survey/1`)
- //         .then((response) => response.json())
- //         .then(({ surveyData }) => {
- //         setSurveyData(surveyData)
- //         setDataLoading(false)
- //         })
- // }, [])
+useEffect(() => {
+  fetch(`http://localhost:8000/survey`)
+       .then((response) => response.json()
+       .then(({ surveyData }) => console.log(surveyData))
+       .catch((error) => console.log(error))
+   )
+}, [])
 
 /* useEffect(() => {
   async function fetchSurvey() {
