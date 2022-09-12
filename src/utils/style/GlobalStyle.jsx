@@ -8,8 +8,8 @@ const StyledGlobalStyle = createGlobalStyle`
     }
 
     body {
-        background-color: ${({ isDarkMode }) => (isDarkMode ? 'black' : 'white' )};
-        margin: 0;
+      background-color: ${({ isDarkMode }) => (isDarkMode ? '#2F2E41' : 'white')};
+      margin: 0;
     }
 `
 
