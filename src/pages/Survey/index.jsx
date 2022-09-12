@@ -1,9 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
+import { SurveyContext } from '../../utils/context'
 
 const SurveyContainer = styled.div`
   display: flex;
@@ -60,8 +61,12 @@ function Survey() {
   const nextQuestionNumber = questionNumberInt + 1
   const [surveyData, setSurveyData] = useState({})
   const [isDataLoading, setDataLoading] = useState(false)
+  const { saveAnswers, answers } = useContext(SurveyContext)
   const [error, setError] = useState(false)
 
+function saveReply(answer) {
+  saveAnswers({ [questionNumber]: answer })
+}
 
 useEffect(() => {
   async function fetchSurvey() {
@@ -91,6 +96,22 @@ return (
           <Loader />
       ) : (
       <QuestionContent>{surveyData[questionNumber]}</QuestionContent>
+      )}
+      {answers && (
+        <ReplyWrapper>
+          <ReplyBox
+            onClick={() => saveReply(true)}
+            isSelected={answers[questionNumber] === true}
+            >
+              Oui
+          </ReplyBox>
+          <ReplyBox
+            onClick={() => saveReply(false)}
+            isSelected={answers[questionNumber] === false}
+            >
+              Non
+          </ReplyBox>
+        </ReplyWrapper>
       )}
       <LinkWrapper>
         <Link to={`/survey/${prevQuestionNumber}`}>Précédent</Link>

@@ -1,7 +1,15 @@
-function Results(title, listLength, index) {
-  if (index === listLength -1) {
-      return title
-  }
-  return `${title},`
+import { useContext } from 'react'
+import { SurveyContext } from '../../utils/context'
+
+function Results() {
+  const { answers } = useContext(SurveyContext)
+  console.log(answers)
+
+  return (
+    <div>
+      <h1>Résultats</h1>
+    </div>
+  )
 }
+
 export default Results
