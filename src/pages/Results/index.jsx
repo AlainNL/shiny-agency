@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { SurveyContext } from '../../utils/context'
+import colors from '../utils/style/colors'
 
 function Results() {
   const { answers } = useContext(SurveyContext)
