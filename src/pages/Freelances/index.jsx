@@ -53,7 +53,7 @@ function Freelances() {
           </LoaderWrapper>
         ) : (
         <CardsContainer>
-        {freelancersList.map((profile) => (
+        {freelancersList?.map((profile) => (
           <Link key={`freelance-${profile.id}`} to={`/profile/${profile.id}`}>
               <Card
                   label={profile.job}
