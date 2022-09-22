@@ -62,6 +62,27 @@ const Skill = styled.span`
     ${({ theme }) => (theme=== 'light' ? colors.dark : 'white')}
 `
 
+const Availability = styled.span`
+  &:before {
+    position: absolute;
+    left: 0;
+    top: 4px;
+    height: 10px;
+    width: 10px;
+    border-radius: 5px;
+    background-color: ${({ available }) => (available ? 'green' : 'red')}
+    content: '';
+  }
+  padding-left: 20px;
+  position: relative;
+`
+
+const Price = styled.span`
+  padding-top: 10px;
+  font-weight: 500;
+  font-size: 20px;
+`
+
 function Profile () {
     const { id: queryId } = useParams()
     const [profileData, setProfileData] = useState({})
@@ -104,6 +125,10 @@ const {
                   </Skill>
                 ))}
             </SkillsWrapper>
+            <Availability available={available}>
+              {available ? 'Disponible maintenant' : 'Indisponible'}
+            </Availability>
+            <Price>{tjm} € / jour</Price>
           </ProfileDetails>
         </ProfileWrapper>
       )}
