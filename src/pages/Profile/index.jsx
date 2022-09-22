@@ -48,7 +48,19 @@ const JobTitle = styled.h2`
   margin: 0;
   font-weight: 500;
 `
+const SkillsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 10px 0;
+`
 
+const Skill = styled.span`
+  border-radius: 5px;
+  padding: 5px;
+  margint-right: 5px;
+  border: 1px solid
+    ${({ theme }) => (theme=== 'light' ? colors.dark : 'white')}
+`
 
 function Profile () {
     const { id: queryId } = useParams()
@@ -84,6 +96,14 @@ const {
               <Location>{location}</Location>
             </TitleWrapper>
             <JobTitle>{job}</JobTitle>
+            <SkillsWrapper>
+              {skills &&
+                skills.map((skill) => (
+                  <Skill key={`skill-${skill}-${id}`} theme={theme}>
+                    {skill}
+                  </Skill>
+                ))}
+            </SkillsWrapper>
           </ProfileDetails>
         </ProfileWrapper>
       )}
