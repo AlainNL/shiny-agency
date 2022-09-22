@@ -20,6 +20,35 @@ const Picture = styled.img`
   border-radius: 75px;
 `
 
+const ProfileDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 50px;
+  color: ${({ theme }) => (theme=== 'light' ? colors.dark : 'white')}
+`
+const Title = styled.h1`
+  font-size: 25px;
+  margin: 0;
+  font-weight: 500;
+`
+
+const Location = styled.span`
+  margin-left: 15px;
+  color: ${colors.secondary};
+`
+const TitleWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`
+
+const JobTitle = styled.h2`
+  padding-top: 10px;
+  font-size: 20px;
+  margin: 0;
+  font-weight: 500;
+`
+
 
 function Profile () {
     const { id: queryId } = useParams()
@@ -49,6 +78,13 @@ const {
       {({ theme }) => (
         <ProfileWrapper theme={theme}>
           <Picture src={picture} alt={name} height={150} width={150} />
+          <ProfileDetails theme={theme}>
+            <TitleWrapper>
+              <Title>{name}</Title>
+              <Location>{location}</Location>
+            </TitleWrapper>
+            <JobTitle>{job}</JobTitle>
+          </ProfileDetails>
         </ProfileWrapper>
       )}
     </ThemeContext.Consumer>
