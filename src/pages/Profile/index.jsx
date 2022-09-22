@@ -1,54 +1,57 @@
-import { Component } from "react";
+import { useState, useEffect } from "react"
+import styled from 'styled-components'
+import { useParams } from 'react-router-dom'
+import colors from '../../utils/style/colors'
+import { ThemeContext } from '../../utils/context'
 
-class Profile extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-        profileData: {},
-    }
-  }
+const ProfileWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 90px 0;
+  margin: 0 90px;
+  background-color= ${({ theme }) =>
+    theme === 'light' ? colors.backgroundLight : colors.backgroundBlack};
+`
+const Picture = styled.img`
+  height: 150px;
+  width: 150px;
+  border-radius: 75px;
+`
 
 
-componentDidMount() {
-  const { id } = this.props.match.params
+function Profile () {
+    const { id: queryId } = useParams()
+    const [profileData, setProfileData] = useState({})
+    useEffect(() => {
+      fetch(`http://localhost:8000/freelance?id=${queryId}`)
+        .then((response) => response.json())
+        .then((jsonResponse) => {
+          setProfileData(jsonResponse?.freelanceData)
+        })
+    }, [queryId])
 
-  fetch(`http://localhost:8000/freelance?id=${id}`)
-  .then((response) => response.json())
-  .then((jsonResponse) => {
-      this.setState({ profileData: jsonResponse?.freelanceData})
-  })
-}
 
-render() {
-    const { profileData } = this.state
-    const {
-        picture,
-        name,
-        location,
-        tjm,
-        job,
-        skills,
-        available,
-        id,
-        } = profileData
+const {
+  picture,
+  name,
+  location,
+  tjm,
+  job,
+  skills,
+  available,
+  id,
+  } = profileData
 
-        return (
-            <div>
-                <img src={picture} alt={name} height={150} />
-
-                <h1>{name}</h1>
-                <span>{location}</span>
-                <h2>{job}</h2>
-                <div>
-                    {skills &&
-                        skills.map((skill) => (
-                            <div key={`skill-${skill}-${id}`}>{skill}</div>
-                        ))}
-                </div>
-                <div>{available ? 'Disponible maintenant' : 'Indisponible'}</div>
-                <span>{tjm} € / jour</span>
-            </div>
-        )
-    }
+  return (
+    <ThemeContext.Consumer>
+      {({ theme }) => (
+        <ProfileWrapper theme={theme}>
+          <Picture src={picture} alt={name} height={150} width={150} />
+        </ProfileWrapper>
+      )}
+    </ThemeContext.Consumer>
+  )
 }
 export default Profile
