@@ -4,7 +4,7 @@ import colors from '../../utils/style/colors'
 import styled from 'styled-components'
 import { useFetch, useTheme } from '../../utils/hooks'
 import { StyledLink, Loader } from '../../utils//style/Atoms'
-
+import EmptyList from '../../components/EmptyList'
 
 const ResultsContainer= styled.div`
   display: flex;
@@ -92,6 +92,10 @@ function Results() {
   }
 
   const resultsData = data?.resultsData
+
+  if (resultsData?.length < 1) {
+    return <EmptyList theme={theme} />
+  }
 
   return isLoading ? (
     <LoaderWrapper>
