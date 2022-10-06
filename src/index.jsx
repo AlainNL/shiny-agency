@@ -11,28 +11,32 @@ import { SurveyProvider, ThemeProvider } from './utils/context';
 import Footer from './components/Footer';
 import GlobalStyle from './utils/style/GlobalStyle';
 import Profile from './pages/Profile';
+import store from './utils/store'
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(
   document.getElementById("root")
 );
 root.render(
-  <React.StrictMode>
-      <BrowserRouter>
-        <ThemeProvider>
-          <SurveyProvider>
-            <GlobalStyle />
-            <Header />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/survey/:questionNumber" element={<Survey />} />
-              <Route path="/results" element={<Results />} />
-              <Route path="/freelances" element={<Freelances />} />
-              <Route path="/profile/:id" element={<Profile />} />
-              <Route path= "*" element={<Error />} />
-            </Routes>
-            <Footer />
-          </SurveyProvider>
-        </ThemeProvider>
-      </BrowserRouter>
-  </React.StrictMode>
+  <Provider store={store}>
+    <React.StrictMode>
+        <BrowserRouter>
+          <ThemeProvider >
+            <SurveyProvider>
+              <GlobalStyle />
+              <Header />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/survey/:questionNumber" element={<Survey />} />
+                <Route path="/results" element={<Results />} />
+                <Route path="/freelances" element={<Freelances />} />
+                <Route path="/profile/:id" element={<Profile />} />
+                <Route path= "*" element={<Error />} />
+              </Routes>
+              <Footer />
+            </SurveyProvider>
+          </ThemeProvider>
+        </BrowserRouter>
+    </React.StrictMode>
+  </Provider>
   );
