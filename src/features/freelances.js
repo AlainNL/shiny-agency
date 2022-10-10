@@ -1,4 +1,5 @@
 import produce from 'immer'
+import { selectFreelances } from '../utils/selectors'
 
 const initialState = {
 
