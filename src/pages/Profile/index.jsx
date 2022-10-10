@@ -2,7 +2,6 @@ import { useEffect } from "react"
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import colors from '../../utils/style/colors'
-import { ThemeContext } from '../../utils/context'
 import { useSelector, useStore } from "react-redux"
 import { selectFreelance, selectTheme } from '../../utils/selectors'
 import { fetchOrUpdateFreelance } from "../../features/freelance"
@@ -87,16 +86,15 @@ const Price = styled.span`
 `
 
 function Profile () {
-    const { id: queryId } = useParams()
-    const [profileData, setProfileData] = useState({})
-    useEffect(() => {
-      fetch(`http://localhost:8000/freelance?id=${queryId}`)
-        .then((response) => response.json())
-        .then((jsonResponse) => {
-          setProfileData(jsonResponse?.freelanceData)
-        })
-    }, [queryId])
+  const theme = useSelector(selectTheme)
+  const { id: freelanceId } = useParams()
+  const store = useStore()
+  useEffect(() => {
+    fetchOrUpdateFreelance(store, freelanceId)
+  }, [store, freelanceId])
 
+  const freelance = useSelector(selectFreelance(freelanceId))
+  const profileData = freelance.data?.freelanceData ?? {}
 
 const {
   picture,
@@ -110,8 +108,6 @@ const {
   } = profileData
 
   return (
-    <ThemeContext.Consumer>
-      {({ theme }) => (
         <ProfileWrapper theme={theme}>
           <Picture src={picture} alt={name} height={150} width={150} />
           <ProfileDetails theme={theme}>
@@ -134,8 +130,6 @@ const {
             <Price>{tjm} € / jour</Price>
           </ProfileDetails>
         </ProfileWrapper>
-      )}
-    </ThemeContext.Consumer>
   )
 }
 export default Profile
