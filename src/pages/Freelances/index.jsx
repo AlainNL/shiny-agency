@@ -2,7 +2,11 @@ import Card from '../../components/Card'
 import styled from 'styled-components'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
-import { useFetch, useTheme } from '../../utils/hooks'
+import { useSelector, useStore } from 'react-redux'
+import { selectFreelances, selectTheme } from '../../utils/selectors'
+import { useEffect } from 'react'
+import { fetchOrUpdateFreelances } from '../../features/freelances'
+import { Link } from 'react-router-dom'
 
 const CardsContainer = styled.div`
   display: grid;
@@ -35,14 +39,15 @@ const LoaderWrapper = styled.div`
 `
 
 function Freelances() {
-  const { theme } = useTheme()
-  const { data, isLoading, error } = useFetch(
-    `http://localhost:8000/freelances`
-  )
+  const store = useStore()
+  useEffect(() => {
+    fetchOrUpdateFreelances(store)
+  }, [store])
 
-  const freelancersList = data?.freelancersList
+  const { theme } = useSelector(selectTheme)
+  const freelances = useSelector(selectFreelances)
 
-  if (error) {
+  if (freelances.status === 'rejected') {
     return <span>Il y a un problème</span>
   }
 
@@ -52,20 +57,21 @@ function Freelances() {
       <PageSubtitle theme={theme}>
         Chez Shiny nous réunissons les meilleurs profils pour vous.
       </PageSubtitle>
-      {isLoading ? (
+      {freelances.status === 'pending' || freelances.status === 'void' ? (
         <LoaderWrapper>
           <Loader theme={theme} data-testid="loader" />
         </LoaderWrapper>
       ) : (
         <CardsContainer>
-          {freelancersList?.map((profile, index) => (
-            <Card
-              key={`${profile.name}-${index}`}
-              label={profile.job}
-              title={profile.name}
-              picture={profile.picture}
-              theme={theme}
-            />
+          {freelances.data.freelancersList.map((profile) => (
+            <Link key={`freelance-${profile.id}`} to={`/profile/${profile.id}`}>
+              <Card
+                label={profile.job}
+                title={profile.name}
+                picture={profile.picture}
+                theme={theme}
+              />
+            </Link>
           ))}
         </CardsContainer>
       )}

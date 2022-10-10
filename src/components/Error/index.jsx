@@ -1,5 +1,8 @@
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import colors from '../../utils/style/colors'
+import ErrorIllustration from '../../assets/404.svg'
+import { selectTheme } from '../../utils/selectors'
 
 const ErrorWrapper = styled.div`
   margin: 30px;
@@ -22,11 +25,13 @@ const Illustration = styled.img`
 `
 
 function Error() {
+  const theme = useSelector(selectTheme)
+
   return (
-    <ErrorWrapper>
-      <ErrorTitle>Oups 🙈 Cette page n'existe pas</ErrorTitle>
-      <Illustration />
-      <ErrorSubtitle>
+    <ErrorWrapper theme={theme}>
+      <ErrorTitle theme={theme}>Oups 🙈 Cette page n'existe pas</ErrorTitle>
+      <Illustration src={ErrorIllustration} />
+      <ErrorSubtitle theme={theme}>
         Il semblerait que la page que vous cherchez n'existe pas
       </ErrorSubtitle>
     </ErrorWrapper>

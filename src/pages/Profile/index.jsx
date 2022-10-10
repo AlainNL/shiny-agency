@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import colors from '../../utils/style/colors'
 import { ThemeContext } from '../../utils/context'
+import { useSelector, useStore } from "react-redux"
+import { selectFreelance, selectTheme } from '../../utils/selectors'
+import { fetchOrUpdateFreelance } from "../../features/freelance"
 
 const ProfileWrapper = styled.div`
   display: flex;
