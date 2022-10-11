@@ -2,9 +2,11 @@ import { useContext } from 'react'
 import { SurveyContext } from '../../utils/context'
 import colors from '../../utils/style/colors'
 import styled from 'styled-components'
-import { useFetch, useTheme } from '../../utils/hooks'
+import { useFetch } from '../../utils/hooks'
 import { StyledLink, Loader } from '../../utils//style/Atoms'
 import EmptyList from '../../components/EmptyList'
+import { useSelector } from 'react-redux'
+import { selectTheme } from '../../utils/selectors'
 
 const ResultsContainer= styled.div`
   display: flex;
@@ -81,7 +83,7 @@ function formatFetchParams(answers) {
 }
 
 function Results() {
-  const { theme } = useTheme()
+  const { theme } = useSelector(selectTheme)
   const { answers } = useContext(SurveyContext)
   const fetchParams = formatFetchParams(answers)
 
