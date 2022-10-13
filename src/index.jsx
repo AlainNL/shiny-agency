@@ -7,7 +7,7 @@ import Header from './components/Header';
 import Error from './components/Error';
 import Freelances from './pages/Freelances';
 import Results from './pages/Results';
-import { SurveyProvider, ThemeProvider } from './utils/context';
+import { SurveyProvider } from './utils/context';
 import Footer from './components/Footer';
 import GlobalStyle from './utils/style/GlobalStyle';
 import Profile from './pages/Profile';
@@ -21,7 +21,6 @@ root.render(
   <Provider store={store}>
     <React.StrictMode>
         <BrowserRouter>
-          <ThemeProvider >
             <SurveyProvider>
               <GlobalStyle />
               <Header />
@@ -35,7 +34,6 @@ root.render(
               </Routes>
               <Footer />
             </SurveyProvider>
-          </ThemeProvider>
         </BrowserRouter>
     </React.StrictMode>
   </Provider>
