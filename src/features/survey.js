@@ -1,4 +1,4 @@
-import produce from 'immer'
+import { createAction, createReducer } from '@reduxjs/toolkit'
 import { selectSurvey } from '../utils/selectors'
 
 const initialState = {
@@ -7,13 +7,9 @@ const initialState = {
   error: null,
 }
 
-const FETCHING = 'survey/fetching'
-const RESOLVED = 'survey/resolved'
-const REJECTED = 'survey/rejected'
-
-const surveyFetching = () => ({ type: FETCHING })
-const surveyResolved = (data) => ({ type: RESOLVED, payload: data })
-const surveyRejected = (error) => ({ type: REJECTED, payload: error })
+const surveyFetching = createAction('survey/fetching')
+const surveyResolved= createAction('survey/resolved')
+const surveyRejected = createAction('survey/rejected')
 
 export async function fetchOrUpdateSurvey(store) {
   const status = selectSurvey(store.getState()).status
@@ -30,26 +26,32 @@ export async function fetchOrUpdateSurvey(store) {
   }
 }
 
-export default function surveyReducer(state = initialState, action) {
-  return produce(state, (draft) => {
-    switch (action.type) {
-      case FETCHING: {
-        if (draft.status === 'rejected') {
-          draft.error = null
-          draft.status = 'pending'
-          return
-        }
+export default createReducer(initialState, (builder) =>
+  builder
+    .addCase(surveyFetching, (draft, action) => {
+      if (draft.status === 'void') {
+        draft.status = 'pending'
         return
       }
-      case RESOLVED: {
+      if (draft.status === 'rejected') {
+        draft.error = null
+        draft.status = 'pending'
+        return
+      }
+      if (draft.status === 'resolved') {
+        draft.status = 'updating'
+        return
+      }
+    })
+    .addCase(surveyResolved, (draft, action) => {
         if (draft.status === 'pending' || draft.status === 'updating') {
           draft.data = action.payload
           draft.status = 'resolved'
           return
         }
         return
-      }
-      case REJECTED: {
+      })
+      .addCase(surveyRejected, (draft, action) => {
         if (draft.status === 'pendind' || draft.status === 'updating') {
           draft.error = action.payload
           draft.data = null
@@ -57,9 +59,5 @@ export default function surveyReducer(state = initialState, action) {
           return
         }
       return
-      }
-      default:
-        return
-    }
-  })
-}
+    })
+)
