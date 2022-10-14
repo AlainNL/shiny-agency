@@ -1,74 +1,66 @@
-import produce from 'immer'
-import { selectFreelances } from '../utils/selectors'
+import { selectFreelance } from '../utils/selectors'
+import { createAction, createReducer } from '@reduxjs/toolkit'
 
 const initialState = {
-
   status: 'void',
-  date: null,
+  data: null,
   error: null,
 }
 
-const FETCHING = 'freelances/fetching'
-const RESOLVED = 'freelances/resolved'
-const REJECTED = 'freelances/rejected'
+const freelancesFetching = createAction('freelance/fetching')
+const freelanceResolved = createAction('freelance/resolved')
+const freelancesRejected = createAction('freelance/resolved')
 
-const freelancesFetching = () => ({ type: FETCHING })
-const freelancesResolved = (data) => ({ type: RESOLVED, payload: data })
-const freelancesRejected = (error) => ({ type: REJECTED, payload: error })
 
-export async function fetchOrUpdateFreelances(store) {
-  const status = selectFreelances(store.getState()).status
-  if (status === 'pending' || status === 'updating') {
-    return
+export async function fetchOrUpdateFreelance(store, freelanceId) {
+    const selectFreelanceById = selectFreelance(freelanceId)
+    const status = selectFreelanceById(store.getState()).status
+    if (status === 'pending' || status === 'updating') {
+      return
   }
   store.dispatch(freelancesFetching())
   try {
-    const response = await fetch('http://localhost:8000/freelances')
+    const response = await fetch(`http://localhost:8000/freelance?id=${freelanceId}`)
     const data = await response.json()
-    store.dispatch(freelancesResolved(data))
+    store.dispatch(freelanceResolved(data))
   } catch (error) {
     store.dispatch(freelancesRejected(error))
   }
 }
 
-export default function freelancesReducer(state = initialState,action) {
-    return produce(state, (draft) => {
-      switch (action.type) {
-        case FETCHING: {
-          if (draft.status === 'void') {
-            draft.status = 'pending'
-            return
-          }
-          if (draft.status === 'rejected') {
-            draft.error = null
-            draft.status = 'pending'
-            return
-          }
-          if (draft.status === 'resolved') {
-            draft.status = 'updating'
-            return
-          }
-          return
-        }
-        case RESOLVED: {
-          if (draft.status === 'pending' || draft.status === 'updating') {
-            draft.data = action.payload
-            draft.status = 'resolved'
-            return
-          }
-          return
-        }
-        case REJECTED: {
-          if (draft.status === 'pending' || draft.status === 'updating') {
-            draft.status = 'rejected'
-            draft.error = action.payload
-            draft.data = null
-            return
-        }
-          return
+export default createReducer(initialState, (builder) =>
+  builder
+    .addCase(freelancesFetching, (draft) => {
+      if (draft.status === 'void') {
+        draft.status = 'pending'
+        return
       }
-      default:
-          return
-    }
-  })
-}
+      if (draft.status === 'rejected') {
+        draft.error = null
+        draft.status = 'pending'
+        return
+      }
+      if (draft.status === 'resolved') {
+        draft.status = 'updating'
+        return
+      }
+      return
+    })
+    .addCase(freelancesResolved, (draft, action) => {
+      if (draft.status === 'pending' || draft.status === 'updating') {
+        draft.data = action.payload
+        draft.status = 'resolved'
+        return
+      }
+      return
+    })
+    .addCase(freelancesRejected, (draft, action) => {
+      if (draft.status === 'pending' || draft.status === 'updating') {
+        draft.status = 'rejected'
+        draft.error = action.payload
+        draft.data = null
+        return
+      }
+      return
+    })
+)
