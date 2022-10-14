@@ -1,4 +1,4 @@
-import { selectFreelance } from '../utils/selectors'
+import { selectFreelances } from '../utils/selectors'
 import { createAction, createReducer } from '@reduxjs/toolkit'
 
 const initialState = {
@@ -7,22 +7,21 @@ const initialState = {
   error: null,
 }
 
-const freelancesFetching = createAction('freelance/fetching')
-const freelanceResolved = createAction('freelance/resolved')
-const freelancesRejected = createAction('freelance/resolved')
+const freelancesFetching = createAction('freelances/fetching')
+const freelancesResolved = createAction('freelances/resolved')
+const freelancesRejected = createAction('freelances/rejected')
 
 
-export async function fetchOrUpdateFreelance(store, freelanceId) {
-    const selectFreelanceById = selectFreelance(freelanceId)
-    const status = selectFreelanceById(store.getState()).status
+export async function fetchOrUpdateFreelances(store) {
+    const status = selectFreelances(store.getState()).status
     if (status === 'pending' || status === 'updating') {
       return
   }
   store.dispatch(freelancesFetching())
   try {
-    const response = await fetch(`http://localhost:8000/freelance?id=${freelanceId}`)
+    const response = await fetch('http://localhost:8000/freelances')
     const data = await response.json()
-    store.dispatch(freelanceResolved(data))
+    store.dispatch(freelancesResolved(data))
   } catch (error) {
     store.dispatch(freelancesRejected(error))
   }

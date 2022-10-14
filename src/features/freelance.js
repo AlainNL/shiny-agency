@@ -1,17 +1,20 @@
-import produce from 'immer'
 import { selectFreelance } from '../utils/selectors'
-import { createAction } from '@reduxjs/toolkit'
+import { createAction, createReducer } from '@reduxjs/toolkit'
 
 const initialState = {
-  status: 'void',
-  data: null,
-  error: null,
+
 }
 
-const freelancesFetching = createAction('freelance/fetching')
-const freelanceResolved = createAction('freelance/resolved')
-const freelancesRejected = createAction('freelance/resolved')
+const freelanceFetching = createAction('freelance/fetching', (freelanceId) => ({
+  payload: { freelanceId },
+}))
+const freelanceResolved = createAction('freelance/resolved', (freelanceId, data) => ({
+  payload: { freelanceId, data },
+}))
 
+const freelanceRejected = createAction('freelance/rejected', (freelanceId, error) => ({
+  payload: { freelanceId, error },
+}))
 
 export async function fetchOrUpdateFreelance(store, freelanceId) {
     const selectFreelanceById = selectFreelance(freelanceId)
@@ -19,47 +22,61 @@ export async function fetchOrUpdateFreelance(store, freelanceId) {
     if (status === 'pending' || status === 'updating') {
       return
   }
-  store.dispatch(freelancesFetching())
+  store.dispatch(freelanceFetching(freelanceId))
   try {
     const response = await fetch(`http://localhost:8000/freelance?id=${freelanceId}`)
     const data = await response.json()
-    store.dispatch(freelanceResolved(data))
+    store.dispatch(freelanceResolved(freelanceId, data))
   } catch (error) {
-    store.dispatch(freelancesRejected(error))
+    store.dispatch(freelanceRejected(freelanceId, error))
   }
 }
 
-export default function createReducer(initialState, (builder) =>
+function setVoidIfUndefined(draft, freelanceId) {
+  if (draft[freelanceId] === undefined) {
+    draft[freelanceId] = { status: 'void'}
+  }
+}
+
+export default createReducer( initialState, (builder) =>
   builder
-    .addCase(freelancesFetching, (draft) => {
-      if (draft.status === 'void') {
-        draft.status = 'pending'
+    .addCase(freelanceFetching, (draft, action) => {
+      setVoidIfUndefined(draft, action.payload.freelanceId)
+      if (draft[action.payload.freelanceId].status === 'void') {
+        draft[action.payload.freelanceId].status = 'pending'
         return
       }
-      if (draft.status === 'rejected') {
-        draft.error = null
-        draft.status = 'pending'
+      if (draft[action.payload.freelanceId].status === 'rejected') {
+        draft[action.payload.freelanceId].status = null
+        draft[action.payload.freelanceId].status = 'pending'
         return
       }
-      if (draft.status === 'resolved') {
-        draft.status = 'updating'
+      if (draft[action.payload.freelanceId].status === 'resolved') {
+        draft[action.payload.freelanceId].status = 'updating'
+        return
+      }
+    })
+    .addCase(freelanceResolved, (draft, action) => {
+      setVoidIfUndefined(draft, action.payload.freelanceId)
+      if (
+        draft[action.payload.freelanceId].status === 'pending' ||
+        draft[action.payload.freelanceId].status === 'updating'
+      ) {
+        draft[action.payload.freelanceId].data = action.payload.data
+        draft[action.payload.freelanceId].status = 'resolved'
         return
       }
       return
     })
-    .addCase(freelancesResolved, (draft, action) => {
-      if (draft.status === 'pending' || draft.status === 'updating') {
-        draft.data = action.payload
-        draft.status = 'resolved'
-        return
-      }
-      return
-    })
-    .addCase(freelancesRejected, (draft, action) => {
-      if (draft.status === 'pending' || draft.status === 'updating') {
-        draft.status = 'rejected'
-        draft.error = action.payload
-        draft.data = null
+    .addCase(freelanceRejected, (draft, action) => {
+      setVoidIfUndefined(draft, action.payload.freelanceId)
+      if (
+        draft[action.payload.freelanceId].status === 'pending' ||
+        draft[action.payload.freelanceId].status === 'updating'
+      ) {
+        draft[action.payload.freelanceId].error = action.payload.error
+        draft[action.payload.freelanceId].data = null
+        draft[action.payload.freelanceId].status = 'rejected'
         return
       }
       return
