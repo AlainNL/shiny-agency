@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import colors from '../../utils/style/colors'
-import { useContext } from 'react'
 import EmailInput from '../EmailInput'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectTheme } from '../../utils/selectors'
@@ -11,7 +10,7 @@ const FooterContainer = styled.footer`
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding-top; 60px;
+    padding-top: 60px 0;
 `
 
 const NightModeButton = styled.button`
@@ -19,6 +18,7 @@ const NightModeButton = styled.button`
     border: none;
     cursor: pointer;
     color: ${colors.secondary};
+    padding-top: 30px;
 `
 
 function Footer () {

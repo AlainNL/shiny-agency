@@ -44,7 +44,7 @@ function Freelances() {
     fetchOrUpdateFreelances(store)
   }, [store])
 
-  const { theme } = useSelector(selectTheme)
+  const theme = useSelector(selectTheme)
   const freelances = useSelector(selectFreelances)
 
   if (freelances.status === 'rejected') {
