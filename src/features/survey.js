@@ -52,7 +52,7 @@ export default createReducer(initialState, (builder) =>
         return
       })
       .addCase(surveyRejected, (draft, action) => {
-        if (draft.status === 'pendind' || draft.status === 'updating') {
+        if (draft.status === 'pending' || draft.status === 'updating') {
           draft.error = action.payload
           draft.data = null
           draft.status = 'rejected'

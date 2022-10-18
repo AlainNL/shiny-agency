@@ -2,7 +2,7 @@ import Card from '../../components/Card'
 import styled from 'styled-components'
 import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
-import { useSelector, useStore } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectFreelances, selectTheme } from '../../utils/selectors'
 import { useEffect } from 'react'
 import { fetchOrUpdateFreelances } from '../../features/freelances'
@@ -39,10 +39,11 @@ const LoaderWrapper = styled.div`
 `
 
 function Freelances() {
-  const store = useStore()
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    fetchOrUpdateFreelances(store)
-  }, [store])
+    dispatch(fetchOrUpdateFreelances)
+  }, [dispatch])
 
   const theme = useSelector(selectTheme)
   const freelances = useSelector(selectFreelances)

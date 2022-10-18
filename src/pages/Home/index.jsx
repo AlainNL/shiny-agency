@@ -2,6 +2,8 @@ import styled from 'styled-components'
 import colors from '../../utils/style/colors'
 import HomeIllustration from '../../assets/home-illustration.svg'
 import { StyledLink } from '../../utils/style/Atoms'
+import { useSelector } from 'react-redux'
+import { selectTheme } from '../../utils/selectors'
 
 const HomeWrapper = styled.div`
   display: flex;
@@ -36,11 +38,13 @@ const Illustration = styled.img`
 `
 
 function Home() {
+  const theme = useSelector(selectTheme)
+
   return (
     <HomeWrapper>
-      <HomerContainer>
+      <HomerContainer theme={theme}>
         <LeftCol>
-          <StyledTitle>
+          <StyledTitle theme={theme}>
             Repérez vos besoins, nous vous proposon les meilleurs talents.
           </StyledTitle>
           <StyledLink to="/survey/1" $isFullLink>

@@ -16,19 +16,21 @@ const freelanceRejected = createAction('freelance/rejected', (freelanceId, error
   payload: { freelanceId, error },
 }))
 
-export async function fetchOrUpdateFreelance(store, freelanceId) {
+export function fetchOrUpdateFreelance(freelanceId) {
+  return async (dispatch, getState) => {
     const selectFreelanceById = selectFreelance(freelanceId)
-    const status = selectFreelanceById(store.getState()).status
+    const status = selectFreelanceById(getState()).status
     if (status === 'pending' || status === 'updating') {
-      return
-  }
-  store.dispatch(freelanceFetching(freelanceId))
-  try {
-    const response = await fetch(`http://localhost:8000/freelance?id=${freelanceId}`)
-    const data = await response.json()
-    store.dispatch(freelanceResolved(freelanceId, data))
-  } catch (error) {
-    store.dispatch(freelanceRejected(freelanceId, error))
+        return
+    }
+    dispatch(freelanceFetching(freelanceId))
+    try {
+      const response = await fetch(`http://localhost:8000/freelance?id=${freelanceId}`)
+      const data = await response.json()
+      dispatch(freelanceResolved(freelanceId, data))
+    } catch (error) {
+      dispatch(freelanceRejected(freelanceId, error))
+    }
   }
 }
 
