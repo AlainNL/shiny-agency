@@ -6,6 +6,7 @@ import colors from '../../utils/style/colors'
 import { Loader } from '../../utils/style/Atoms'
 import { SurveyContext } from '../../utils/context'
 import { useFetch } from '../../utils/hooks'
+import { saveAnswer } from '../../features/answers'
 
 const SurveyContainer = styled.div`
   display: flex;

@@ -68,9 +68,9 @@ const { actions, reducer } = createSlice({
           draft.status = 'rejected'
           return
         }
-      }
-    }
-  }
+      },
+    },
+  },
 })
 
 export default reducer
