@@ -54,7 +54,7 @@ const { actions, reducer } = createSlice({
         }
       },
     },
-    resoled: {
+    resolved: {
       prepare: (freelanceId, data) => ({
         payload: { freelanceId, data },
       }),
@@ -87,9 +87,9 @@ const { actions, reducer } = createSlice({
         return
       }
       return
-      }
-    }
-  }
+      },
+    },
+  },
 })
 
 export default reducer

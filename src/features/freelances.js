@@ -1,5 +1,5 @@
 import { selectFreelances } from '../utils/selectors'
-import { createAction, createReducer } from '@reduxjs/toolkit'
+import { createSlice} from '@reduxjs/toolkit'
 
 const initialState = {
   status: 'void',
@@ -7,29 +7,26 @@ const initialState = {
   error: null,
 }
 
-const freelancesFetching = createAction('freelances/fetching')
-const freelancesResolved = createAction('freelances/resolved')
-const freelancesRejected = createAction('freelances/rejected')
-
-
 export async function fetchOrUpdateFreelances(dispatch, getState) {
     const status = selectFreelances(getState()).status
     if (status === 'pending' || status === 'updating') {
       return
   }
-  dispatch(freelancesFetching())
+  dispatch(actions.fetching())
   try {
     const response = await fetch('http://localhost:8000/freelances')
     const data = await response.json()
-    dispatch(freelancesResolved(data))
+    dispatch(actions.resolved(data))
   } catch (error) {
-    dispatch(freelancesRejected(error))
+    dispatch(actions.rejected(error))
   }
 }
 
-export default createReducer(initialState, (builder) =>
-  builder
-    .addCase(freelancesFetching, (draft) => {
+const { actions, reducer } = createSlice({
+  name: 'freelances',
+  initialState,
+  reducers: {
+    fetching: (draft) => {
       if (draft.status === 'void') {
         draft.status = 'pending'
         return
@@ -44,16 +41,16 @@ export default createReducer(initialState, (builder) =>
         return
       }
       return
-    })
-    .addCase(freelancesResolved, (draft, action) => {
+    },
+    resolved: (draft, action) => {
       if (draft.status === 'pending' || draft.status === 'updating') {
         draft.data = action.payload
         draft.status = 'resolved'
         return
       }
       return
-    })
-    .addCase(freelancesRejected, (draft, action) => {
+    },
+    rejected: (draft, action) => {
       if (draft.status === 'pending' || draft.status === 'updating') {
         draft.status = 'rejected'
         draft.error = action.payload
@@ -61,5 +58,8 @@ export default createReducer(initialState, (builder) =>
         return
       }
       return
-    })
-)
+    },
+  },
+})
+
+export default reducer
