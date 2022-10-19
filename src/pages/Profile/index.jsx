@@ -72,7 +72,7 @@ const Availability = styled.span`
     height: 10px;
     width: 10px;
     border-radius: 5px;
-    background-color: ${({ available }) => (available ? 'green' : 'red')}
+    background-color: ${({ available }) => (available ? 'green' : 'red')};
     content: '';
   }
   padding-left: 20px;

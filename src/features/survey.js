@@ -7,18 +7,18 @@ const initialState = {
   error: null,
 }
 
-export async function fetchOrUpdateSurvey(store) {
-  const status = selectSurvey(store.getState()).status
+export async function fetchOrUpdateSurvey(dispatch, getState) {
+  const status = selectSurvey(getState()).status
   if (status === 'pending' || status === 'updating') {
     return
   }
-  store.dispatch(actions.fetching())
+  dispatch(actions.fetching())
   try {
     const response = await fetch('http://localhost:8000/survey')
     const data = await response.json()
-    store.dispatch(actions.resolved(data))
+    dispatch(actions.resolved(data))
   } catch (error) {
-    store.dispatch(actions.rejected(error))
+    dispatch(actions.rejected(error))
   }
 }
 

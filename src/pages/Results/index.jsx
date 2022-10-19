@@ -1,11 +1,9 @@
-import { useContext } from 'react'
-import { SurveyContext } from '../../utils/context'
 import colors from '../../utils/style/colors'
 import styled from 'styled-components'
 import { StyledLink, Loader } from '../../utils//style/Atoms'
 import EmptyList from '../../components/EmptyList'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectResults, selectTheme } from '../../utils/selectors'
+import { selectResults, selectTheme, selectAnswers } from '../../utils/selectors'
 import { useEffect } from 'react'
 import { fetchOrUpdateResults } from '../../features/results'
 
@@ -21,7 +19,7 @@ const ResultsContainer= styled.div`
 
 const ResultsTitle = styled.h2`
   color: ${({ theme }) => (
-    theme === 'light' ? '#00000' : 'fffff')}
+    theme === 'light' ? '#00000' : 'fffff')};
   font-weight: bold;
   font-size: 28px;
   max-width: 60%;
@@ -36,7 +34,7 @@ const DescriptionWrapper = styled.div`
 `
 const JobTitle = styled.span`
   color: ${({ theme }) =>
-    theme = 'light' ? colors.primary : colors.backgroundLight}
+    theme = 'light' ? colors.primary : colors.backgroundLight};
   text-transform: capitalize;
 `
 
@@ -59,8 +57,9 @@ const LoaderWrapper = styled.div`
 export function formatJobList(title, listLength, index) {
     if (index === listLength -1) {
         return title
-    }
+    } else {
     return `${title},`
+    }
 }
 
 export function formatQueryParams(answers) {
@@ -73,7 +72,7 @@ export function formatQueryParams(answers) {
   }, '')
 }
 
-function formatFetchParams(answers) {
+/*function formatFetchParams(answers) {
   const answerNumbers = Object.keys(answers)
 
   return answerNumbers.reduce((previousParams, answerNumber, index) => {
@@ -81,12 +80,12 @@ function formatFetchParams(answers) {
     const separator = isFirstParam ? '' : '&'
     return `${previousParams}${separator}a${answerNumber}`
   }, '')
-}
+}*/
 
 function Results() {
-  const { theme } = useSelector(selectTheme)
-  const { answers } = useContext(SurveyContext)
-  const fetchParams = formatFetchParams(answers)
+  const theme = useSelector(selectTheme)
+  const answers = useSelector(selectAnswers)
+  const fetchParams = formatQueryParams(answers)
   const results = useSelector(selectResults)
   const dispatch = useDispatch()
 
@@ -123,7 +122,6 @@ function Results() {
               key={`result-title-${index}-${result.title}`}
               theme={theme}
             >
-              {result.title}
               {formatJobList(result.title, resultsData.length, index)}
             </JobTitle>
         ))}

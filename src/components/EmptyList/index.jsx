@@ -8,13 +8,13 @@ const Container = styled.div`
   align-items: center;
   margin: 60px 90px:
   padding: 30px;
-  background-color: ${({ theme}) =>
-  theme === 'light' ? colors.backgroundLight : colors.backgroundBlack};
+  background-color: ${({ theme }) =>
+  theme === 'light' ? colors.backgroundLight : colors.backgroundDark};
 `
 const Title = styled.h1`
   color: ${({ theme }) => (theme === 'light' ? '#000000' : '#ffffff')};
 `
-const Illustration = styled.div`
+const Illustration = styled.img`
   margin: 30px 0;
 `
 
