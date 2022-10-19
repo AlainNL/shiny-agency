@@ -1,20 +1,9 @@
 import { selectFreelance } from '../utils/selectors'
-import { createAction, createReducer } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
 
 }
-
-const freelanceFetching = createAction('freelance/fetching', (freelanceId) => ({
-  payload: { freelanceId },
-}))
-const freelanceResolved = createAction('freelance/resolved', (freelanceId, data) => ({
-  payload: { freelanceId, data },
-}))
-
-const freelanceRejected = createAction('freelance/rejected', (freelanceId, error) => ({
-  payload: { freelanceId, error },
-}))
 
 export function fetchOrUpdateFreelance(freelanceId) {
   return async (dispatch, getState) => {
@@ -23,13 +12,13 @@ export function fetchOrUpdateFreelance(freelanceId) {
     if (status === 'pending' || status === 'updating') {
         return
     }
-    dispatch(freelanceFetching(freelanceId))
+    dispatch(actions.fetching(freelanceId))
     try {
       const response = await fetch(`http://localhost:8000/freelance?id=${freelanceId}`)
       const data = await response.json()
-      dispatch(freelanceResolved(freelanceId, data))
+      dispatch(actions.resolved(freelanceId, data))
     } catch (error) {
-      dispatch(freelanceRejected(freelanceId, error))
+      dispatch(actions.rejected(freelanceId, error))
     }
   }
 }
@@ -40,26 +29,37 @@ function setVoidIfUndefined(draft, freelanceId) {
   }
 }
 
-export default createReducer( initialState, (builder) =>
-  builder
-    .addCase(freelanceFetching, (draft, action) => {
-      setVoidIfUndefined(draft, action.payload.freelanceId)
-      if (draft[action.payload.freelanceId].status === 'void') {
-        draft[action.payload.freelanceId].status = 'pending'
-        return
-      }
-      if (draft[action.payload.freelanceId].status === 'rejected') {
-        draft[action.payload.freelanceId].status = null
-        draft[action.payload.freelanceId].status = 'pending'
-        return
-      }
-      if (draft[action.payload.freelanceId].status === 'resolved') {
-        draft[action.payload.freelanceId].status = 'updating'
-        return
-      }
-    })
-    .addCase(freelanceResolved, (draft, action) => {
-      setVoidIfUndefined(draft, action.payload.freelanceId)
+const { actions, reducer } = createSlice({
+  name: 'freelance',
+  initialState,
+  reducers: {
+    fetching: {
+      prepare: (freelanceId) => ({
+        payload: {freelanceId},
+      }),
+      reducer: (draft,action) => {
+        setVoidIfUndefined(draft, action.payload.freelanceId)
+        if (draft[action.payload.freelanceId].status === 'void') {
+          draft[action.payload.freelanceId].status = 'pending'
+          return
+        }
+        if (draft[action.payload.freelanceId].status === 'rejected') {
+          draft[action.payload.freelanceId].status = null
+          draft[action.payload.freelanceId].status = 'pending'
+          return
+        }
+        if (draft[action.payload.freelanceId].status === 'resolved') {
+          draft[action.payload.freelanceId].status = 'updating'
+          return
+        }
+      },
+    },
+    resoled: {
+      prepare: (freelanceId, data) => ({
+        payload: { freelanceId, data },
+      }),
+      reducer: (draft, action) => {
+        setVoidIfUndefined(draft, action.payload.freelanceId)
       if (
         draft[action.payload.freelanceId].status === 'pending' ||
         draft[action.payload.freelanceId].status === 'updating'
@@ -69,9 +69,14 @@ export default createReducer( initialState, (builder) =>
         return
       }
       return
-    })
-    .addCase(freelanceRejected, (draft, action) => {
-      setVoidIfUndefined(draft, action.payload.freelanceId)
+      },
+    },
+    rejected: {
+      prepare: (freelanceId, error) => ({
+        payload: { freelanceId, error },
+      }),
+      reducer: (draft, action) => {
+        setVoidIfUndefined(draft, action.payload.freelanceId)
       if (
         draft[action.payload.freelanceId].status === 'pending' ||
         draft[action.payload.freelanceId].status === 'updating'
@@ -82,5 +87,9 @@ export default createReducer( initialState, (builder) =>
         return
       }
       return
-    })
-)
+      }
+    }
+  }
+})
+
+export default reducer
